@@ -1,19 +1,26 @@
 {
-  "name": "farma-be",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.1.0",
-    "@cloudflare/workers-types": "^4.20240605.0",
-    "typescript": "^5.0.4",
-    "vitest": "1.3.0",
-    "wrangler": "^3.0.0"
-  }
+	"name": "farma-be",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types",
+		"generate": "drizzle-kit generate",
+		"migrate": "wrangler d1 migrations apply farma-db --local"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.1.0",
+		"@cloudflare/workers-types": "^4.20240605.0",
+		"drizzle-kit": "^0.22.6",
+		"typescript": "^5.0.4",
+		"vitest": "1.3.0",
+		"wrangler": "^3.0.0"
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.31.2",
+		"hono": "^4.4.4"
+	}
 }
