@@ -9,7 +9,8 @@
 		"test": "vitest",
 		"cf-typegen": "wrangler types",
 		"generate": "drizzle-kit generate",
-		"migrate": "wrangler d1 migrations apply farma-db --local"
+		"migrate:local": "wrangler d1 migrations apply farma-db --local",
+		"migrate": "wrangler d1 migrations apply farma-db --remote"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.1.0",
