@@ -7,5 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "farma-db"
-database_id = "8fe387c0-2a33-4a7f-bbc0-97bcf3972228"
+database_id = "58395e1b-cb7a-4c3d-bca9-2cb26e55f0c0"
 migrations_dir = "drizzle/migrations"
