@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
-import { todos } from '../db/schema';
+import { shipping, todos } from '../db/schema';
 import { cors } from 'hono/cors';
 
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api');
@@ -85,6 +85,18 @@ app.delete('/todos/:id', async (c) => {
 		const db = drizzle(c.env.DB);
 		await db.delete(todos).where(eq(todos.id, id));
 		return c.json({ message: 'Success' }, 200);
+	} catch (e) {
+		return c.json({ err: e }, 500);
+	}
+});
+
+// 出荷データ全件取得
+app.get('/shipping', async (c) => {
+	try {
+		const db = drizzle(c.env.DB);
+		const results = await db.select().from(shipping);
+		console.log(results)
+		return c.json(results);
 	} catch (e) {
 		return c.json({ err: e }, 500);
 	}

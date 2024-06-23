@@ -10,7 +10,9 @@
 		"cf-typegen": "wrangler types",
 		"generate": "drizzle-kit generate",
 		"migrate:local": "wrangler d1 migrations apply farma-db --local",
-		"migrate": "wrangler d1 migrations apply farma-db --remote"
+		"migrate": "wrangler d1 migrations apply farma-db --remote",
+		"create-dummy-data:local": "npx wrangler d1 execute farma-db --local --file=./db/dummy-data.sql",
+		"create-dummy-data": "wrangler d1 execute farma-db --remote --file=./db/dummy-data.sql"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.1.0",
