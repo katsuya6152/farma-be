@@ -7,23 +7,11 @@ import { cors } from 'hono/cors';
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api');
 
 app.use(
-	'/todos',
+	'/shipping/*',
 	cors({
 		origin: ['https://farma-fe.pages.dev', 'http://localhost:3000'],
 		allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Content-Type'],
-		allowMethods: ['GET', 'POST', 'OPTIONS'],
-		exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-		maxAge: 600,
-		credentials: true,
-	})
-);
-
-app.use(
-	'/todos/*',
-	cors({
-		origin: ['https://farma-fe.pages.dev', 'http://localhost:3000'],
-		allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Content-Type'],
-		allowMethods: ['GET', 'PUT', 'DELETE', 'OPTIONS'],
+		allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
 		maxAge: 600,
 		credentials: true,
@@ -95,8 +83,44 @@ app.get('/shipping', async (c) => {
 	try {
 		const db = drizzle(c.env.DB);
 		const results = await db.select().from(shipping);
-		console.log(results)
 		return c.json(results);
+	} catch (e) {
+		return c.json({ err: e }, 500);
+	}
+});
+
+// 出荷データ新規登録
+app.post('/shipping', async (c) => {
+	const data = await c.req.json<typeof shipping.$inferInsert>();
+	try {
+		const db = drizzle(c.env.DB);
+		await db.insert(shipping).values(data);
+		return c.json({ message: 'Success' }, 201);
+	} catch (e) {
+		return c.json({ err: e }, 500);
+	}
+});
+
+// 出荷データ更新
+app.put('/shipping/:id', async (c) => {
+	const id = parseInt(c.req.param('id'));
+	const data = await c.req.json<typeof shipping.$inferInsert>();
+	try {
+		const db = drizzle(c.env.DB);
+		await db.update(shipping).set(data).where(eq(shipping.id, id));
+		return c.json({ message: 'Success' }, 200);
+	} catch (e) {
+		return c.json({ err: e }, 500);
+	}
+});
+
+// 出荷データ削除
+app.delete('/shipping/:id', async (c) => {
+	const id = parseInt(c.req.param('id'));
+	try {
+		const db = drizzle(c.env.DB);
+		await db.delete(shipping).where(eq(shipping.id, id));
+		return c.json({ message: 'Success' }, 200);
 	} catch (e) {
 		return c.json({ err: e }, 500);
 	}
