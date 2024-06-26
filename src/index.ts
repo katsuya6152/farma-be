@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
-import { shipping, todos } from '../db/schema';
 import { cors } from 'hono/cors';
+import { shipping, todos } from '../db/schema';
 
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api');
 
@@ -20,7 +20,7 @@ app.use(
 
 // 1件データ取得
 app.get('/todos/:id', async (c) => {
-	const id = parseInt(c.req.param('id'));
+	const id = Number.parseInt(c.req.param('id'));
 	try {
 		const db = drizzle(c.env.DB);
 		const results = await db.select().from(todos).where(eq(todos.id, id));
@@ -55,7 +55,7 @@ app.post('/todos', async (c) => {
 
 // 更新
 app.put('/todos/:id', async (c) => {
-	const id = parseInt(c.req.param('id'));
+	const id = Number.parseInt(c.req.param('id'));
 	const { todo, score, isDone } = await c.req.json<typeof todos.$inferInsert>();
 	try {
 		const db = drizzle(c.env.DB);
@@ -68,7 +68,7 @@ app.put('/todos/:id', async (c) => {
 
 // 削除
 app.delete('/todos/:id', async (c) => {
-	const id = parseInt(c.req.param('id'));
+	const id = Number.parseInt(c.req.param('id'));
 	try {
 		const db = drizzle(c.env.DB);
 		await db.delete(todos).where(eq(todos.id, id));
@@ -103,7 +103,7 @@ app.post('/shipping', async (c) => {
 
 // 出荷データ更新
 app.put('/shipping/:id', async (c) => {
-	const id = parseInt(c.req.param('id'));
+	const id = Number.parseInt(c.req.param('id'));
 	const data = await c.req.json<typeof shipping.$inferInsert>();
 	try {
 		const db = drizzle(c.env.DB);
@@ -116,7 +116,7 @@ app.put('/shipping/:id', async (c) => {
 
 // 出荷データ削除
 app.delete('/shipping/:id', async (c) => {
-	const id = parseInt(c.req.param('id'));
+	const id = Number.parseInt(c.req.param('id'));
 	try {
 		const db = drizzle(c.env.DB);
 		await db.delete(shipping).where(eq(shipping.id, id));

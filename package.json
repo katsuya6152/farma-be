@@ -15,6 +15,7 @@
 		"create-dummy-data": "wrangler d1 execute farma-db --remote --file=./db/dummy-data.sql"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.8.2",
 		"@cloudflare/vitest-pool-workers": "^0.1.0",
 		"@cloudflare/workers-types": "^4.20240605.0",
 		"drizzle-kit": "^0.22.6",
