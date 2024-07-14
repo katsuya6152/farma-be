@@ -1,13 +1,15 @@
+import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { shipping, todos } from '../db/schema';
+import { sign } from 'hono/jwt';
+import { shipping, todos, users } from '../db/schema';
 
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api');
 
 app.use(
-	'/shipping/*',
+	'/*',
 	cors({
 		origin: ['https://farma-fe.pages.dev', 'http://localhost:3000'],
 		allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests', 'Content-Type'],
@@ -123,6 +125,40 @@ app.delete('/shipping/:id', async (c) => {
 		return c.json({ message: 'Success' }, 200);
 	} catch (e) {
 		return c.json({ err: e }, 500);
+	}
+});
+
+// ユーザー登録
+app.post('/users/register', async (c) => {
+	const { username, email, password } = await c.req.json();
+	const passwordHash = await bcrypt.hash(password, 10);
+
+	try {
+		const db = drizzle(c.env.DB);
+		console.log(username, email, passwordHash);
+		await db.insert(users).values({ username, email, passwordHash });
+		return c.json({}, 201);
+	} catch (error) {
+		console.error(error);
+		return c.json({ message: 'Unable to register user.' }, 400);
+	}
+});
+
+// ユーザーログイン
+app.post('/users/login', async (c) => {
+	const { email, password } = await c.req.json();
+
+	try {
+		const db = drizzle(c.env.DB);
+		const user = await db.select().from(users).where(eq(users.email, email)).limit(1);
+		if (user && (await bcrypt.compare(password, user[0].passwordHash))) {
+			const token = await sign({ id: user[0].id }, 'secret');
+			return c.json({ jwt: token });
+		}
+		return c.json({ message: 'Invalid email or password.' }, 401);
+	} catch (error) {
+		console.error(error);
+		return c.json({ message: 'Authentication failed.' }, 500);
 	}
 });
 

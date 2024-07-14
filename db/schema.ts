@@ -25,5 +25,12 @@ export const shipping = sqliteTable('shipping', {
 	sex: text('sex'),
 	price: integer('price', { mode: 'number' }).default(0),
 	buyer: text('buyer'),
-	memo: text('memo')
+	memo: text('memo'),
+});
+
+export const users = sqliteTable('users', {
+	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+	username: text('username').notNull().unique(),
+	email: text('email').notNull().unique(),
+	passwordHash: text('passwordHash').notNull(),
 });
